@@ -15,11 +15,6 @@ var db *sql.DB
 
 
 
-type Product struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
-	Price int    `json:"price"`
-}
 
 
 func main() {
@@ -63,22 +58,6 @@ func main() {
 	log.Println("Successfully connected to the database!")
 
 	
-	err = createProductTable(&Product{
-		Name:  "Sample Product",
-		Price: 100,
-	})
-
-	if err != nil {
-		log.Fatalf("Error inserting product: %v", err)
-	}
-
 
 }
 
-func createProductTable(product *Product) error {
-	
-	_, err := db.Exec("INSERT INTO data(name, pirce) VALUES ($1, $2);",
-		product.Name, product.Price)
-
-	return err
-}
