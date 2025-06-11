@@ -1,21 +1,22 @@
 package main
 
 import (
+	
 	"database/sql"
 	"fmt"
 	"log"
 	"os"
-	"github.com/joho/godotenv"
 	"strconv"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
+	"dashboard/handlers"
+	"dashboard/routes"
 
 	_ "github.com/lib/pq"
 )
 
 var db *sql.DB
-
-
-
-
 
 func main() {
 	err := godotenv.Load(".env") // โหลดไฟล์ .env
@@ -28,6 +29,7 @@ func main() {
     user := os.Getenv("DB_USER")
     password := os.Getenv("DB_PASSWORD")
     dbname := os.Getenv("DB_NAME")
+	apiPort := os.Getenv("API_PORT")
 
 	portInt, err := strconv.Atoi(port)
 
@@ -57,7 +59,14 @@ func main() {
 
 	log.Println("Successfully connected to the database!")
 
-	
+	app := fiber.New()
+
+	transactionHandler := handlers.NewTransactionHandler(db)
+
+	routes.SetupRoutes(app, transactionHandler)
+
+	log.Printf("Server starting on port %s\n", apiPort)
+	log.Fatal(app.Listen(fmt.Sprintf(":%s", apiPort)))
 
 }
 
